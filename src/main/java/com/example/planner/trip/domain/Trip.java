@@ -16,7 +16,7 @@ public class Trip {
 
     @UuidGenerator
     @Column(name = "public_id", nullable = false)
-    private UUID publicId;
+    private String publicId;
 
     @Column(name = "destino", nullable = false)
     private String destino;
@@ -45,11 +45,11 @@ public class Trip {
         this.id = id;
     }
 
-    public UUID getPublicId() {
+    public String getPublicId() {
         return publicId;
     }
 
-    public void setPublicId(UUID publicId) {
+    public void setPublicId(String publicId) {
         this.publicId = publicId;
     }
 
@@ -95,6 +95,20 @@ public class Trip {
 
     public boolean getIsConfirmed() {
         return isConfirmed;
+    }
+
+    @Override
+    public String toString() {
+        return "Trip{" +
+                "id=" + id +
+                ", publicId='" + publicId + '\'' +
+                ", destino='" + destino + '\'' +
+                ", startsAt=" + startsAt +
+                ", endsAt=" + endsAt +
+                ", ownerName='" + ownerName + '\'' +
+                ", ownerEmail='" + ownerEmail + '\'' +
+                ", isConfirmed=" + isConfirmed +
+                '}';
     }
 
     public void setIsConfirmed(boolean isConfirmed) {
