@@ -1,5 +1,6 @@
 package com.example.planner.trip.presentation;
 
+import com.example.planner.mail.EmailService;
 import com.example.planner.participant.application.dto.GuestConfirm;
 import com.example.planner.participant.domain.Participant;
 import com.example.planner.trip.application.TripService;
@@ -18,9 +19,11 @@ import java.util.UUID;
 public class TripResource {
 
     private final TripService service;
+    private final EmailService emailService;
 
-    public TripResource(TripService service) {
+    public TripResource(TripService service, EmailService emailService) {
         this.service = service;
+        this.emailService = emailService;
     }
 
 
@@ -57,6 +60,12 @@ public class TripResource {
     public ResponseEntity<Participant> confirmGuest(@PathVariable String id, @RequestBody GuestConfirm payload){
         Participant participant = service.guestsConfirmation(payload, id);
         return ResponseEntity.status(HttpStatus.CREATED).body(participant);
+    }
+
+    @GetMapping("/email")
+    public ResponseEntity<?> sendEmail(){
+        this.emailService.sendEmail("fabiano.pancheniakfilho@gmail.com", "Teste titulo","Teste conteúdo.");
+        return ResponseEntity.status(HttpStatus.OK).body("Email enviado.");
     }
 
 }

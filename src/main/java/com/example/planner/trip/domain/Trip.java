@@ -14,7 +14,6 @@ public class Trip {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
 
-    @UuidGenerator
     @Column(name = "public_id", nullable = false)
     private String publicId;
 
