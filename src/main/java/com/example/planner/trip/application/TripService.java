@@ -68,7 +68,7 @@ public class TripService {
         List<Participant> participantList = participantService.findByTrip(trip.getId());
         for(Participant participant : participantList){
             String URL = "http://localhost:4200/trip-invite?trip="+trip.getPublicId()+"&email="+participant.getEmail();
-            System.out.println(URL);
+            sendParticipantEmail(participant.getEmail(), URL);
         }
         return trip;
     }
@@ -80,11 +80,13 @@ public class TripService {
         String body = "Falta pouco para sua próxima viagem!\nConfirme através da seguinte URL: " + URL;
 
         emailService.sendEmail(email, subject, body);
-        //TODO: enviar e redirecionar para a página da viagem
     }
 
-    private void sendParticipantsEmail(List<String> emails){
-        //TODO: enviar e redirecionar para a página de exibir o nome (o email já deve estar preenchido)
+    private void sendParticipantEmail(String email, String URL){
+        String subject = "Viagem confirmada!";
+        String body = "Sua viagem foi marcada!\nConfirme sua presença através do link: "+URL;
+        this.emailService.sendEmail(email, subject, body);
+        //TODO: VERIFICAR DEMORA ~11s TRÊS EMAILS
     }
 
     public Optional<Trip> getByPublicId(String publicId){
