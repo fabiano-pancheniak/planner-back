@@ -6,6 +6,7 @@ import com.example.planner.participant.domain.Participant;
 import com.example.planner.trip.application.TripService;
 import com.example.planner.trip.application.dto.TripRequestDto;
 import com.example.planner.trip.domain.Trip;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

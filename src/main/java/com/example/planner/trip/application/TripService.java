@@ -47,8 +47,6 @@ public class TripService {
         trip.setOwnerEmail(body.ownerEmail());
         trip.setOwnerName(body.ownerName());
 
-        //enviar emails pra quem tiver na lista de email
-
         repository.save(trip);
 
         this.sendOwnerEmail(body.ownerEmail(), trip.getPublicId());
@@ -92,6 +90,7 @@ public class TripService {
     public Optional<Trip> getByPublicId(String publicId){
         return repository.findByPublicId(publicId);
     }
+    public Optional<Trip> getById(Integer id){return repository.findById(id);};
 
 
     public Participant guestsConfirmation(GuestConfirm payload, String publicId){
