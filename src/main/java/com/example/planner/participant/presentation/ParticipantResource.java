@@ -24,5 +24,11 @@ public class ParticipantResource {
         return ResponseEntity.status(HttpStatus.OK).body(participantList);
     }
 
+    @GetMapping("/trip/{id}")
+    public ResponseEntity<List<Participant>> getByTripId(@PathVariable Integer id){
+        List<Participant> participants = service.findByTrip(id);
+        return ResponseEntity.status(HttpStatus.OK).body(participants);
+    }
+
 
 }

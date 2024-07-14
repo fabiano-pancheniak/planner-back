@@ -2,6 +2,7 @@ package com.example.planner.trip.presentation;
 
 import com.example.planner.mail.EmailService;
 import com.example.planner.participant.application.dto.GuestConfirm;
+import com.example.planner.participant.application.dto.ParticipantRequestDto;
 import com.example.planner.participant.domain.Participant;
 import com.example.planner.trip.application.TripService;
 import com.example.planner.trip.application.dto.TripRequestDto;
@@ -58,9 +59,19 @@ public class TripResource {
     }
 
     @PostMapping("/{id}/guest-confirm")
+    //TODO:
+    // Query did not return a unique result: 2 results were returned
+    // Resolvido reiniciando a base, verificar se vai acontecer novamente
+    // Implementar validação de email
     public ResponseEntity<Participant> confirmGuest(@PathVariable String id, @RequestBody GuestConfirm payload){
         Participant participant = service.guestsConfirmation(payload, id);
         return ResponseEntity.status(HttpStatus.CREATED).body(participant);
+    }
+
+    @PostMapping("/{id}/invite")
+    public ResponseEntity<String> inviteGuest(@PathVariable String id, @RequestBody ParticipantRequestDto payload){
+        service.inviteParticipant(payload);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Convite enviado para "+payload.email()+".");
     }
 
     @GetMapping("/email")

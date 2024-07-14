@@ -52,7 +52,7 @@ public class TripService {
         this.sendOwnerEmail(body.ownerEmail(), trip.getPublicId());
         //preencher tabela de participantes e viagem
         for (String email : body.emailsToInvite()){
-            participantService.addParticipantToTrip(new ParticipantRequestDto(email, trip));
+            this.addParticipantToTrip(new ParticipantRequestDto(email, trip.getId()));
         }
         return trip;
     }
@@ -66,11 +66,10 @@ public class TripService {
         List<Participant> participantList = participantService.findByTrip(trip.getId());
         for(Participant participant : participantList){
             String URL = "http://localhost:4200/trip-invite?trip="+trip.getPublicId()+"&email="+participant.getEmail();
-            sendParticipantEmail(participant.getEmail(), URL);
+            sendParticipantEmail(participant.getEmail(), trip.getOwnerName(), URL);
         }
         return trip;
     }
-
 
     private void sendOwnerEmail(String email, String id){
         String URL = "http://localhost:8080/api/trip/"+id+"/confirm";
@@ -80,9 +79,9 @@ public class TripService {
         emailService.sendEmail(email, subject, body);
     }
 
-    private void sendParticipantEmail(String email, String URL){
+    private void sendParticipantEmail(String email, String name, String URL){
         String subject = "Viagem confirmada!";
-        String body = "Sua viagem foi marcada!\nConfirme sua presença através do link: "+URL;
+        String body = "Você recebeu um convite para participar da viagem de "+name+"!\nConfirme sua presença através do link: "+URL;
         this.emailService.sendEmail(email, subject, body);
         //TODO: VERIFICAR DEMORA ~11s TRÊS EMAILS
     }
@@ -95,13 +94,31 @@ public class TripService {
 
     public Participant guestsConfirmation(GuestConfirm payload, String publicId){
         Trip trip = this.getByPublicId(publicId).orElseThrow(() -> new RuntimeException("Trip não encontrada com o id: "+publicId));
-        Participant participant = participantService.findByEmailAndTripId(payload.email(), trip.getId());
+        Participant participant = participantService.findByTripIdAndEmail(trip.getId(), payload.email());
 
         participant.setName(payload.name());
         participant.setConfirmed(true);
 
         participantService.updateConfirmation(payload.email());
         return participant;
+    }
+
+    public void inviteParticipant(ParticipantRequestDto payload){
+        Trip trip = repository.findById(payload.tripId()).orElseThrow(() -> new RuntimeException("Viagem com o id "+payload.tripId()+" não encontrada."));
+        this.addParticipantToTrip(payload);
+        String URL = "http://localhost:4200/trip-invite?trip="+trip.getPublicId()+"&email="+payload.email();
+
+        this.sendParticipantEmail(payload.email(), trip.getOwnerName(), URL);
+    }
+
+    private void addParticipantToTrip(ParticipantRequestDto payload){
+        Trip trip = repository.findById(payload.tripId()).orElseThrow(() -> new RuntimeException("Viagem com o id "+payload.tripId()+" não encontrada."));
+        Participant participant = new Participant();
+        participant.setEmail(payload.email());
+        participant.setTrip(trip);
+        participant.setConfirmed(false);
+
+        participantService.save(participant);
     }
 
 }

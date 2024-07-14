@@ -23,21 +23,12 @@ public class ParticipantService {
         return repository.findAll();
     }
 
-    public void addParticipantToTrip(ParticipantRequestDto body){
-        Participant participant = new Participant();
-        participant.setEmail(body.email());
-        participant.setTrip(body.trip());
-        participant.setConfirmed(false);
-
-        repository.save(participant);
-    }
-
     public List<Participant> findByTrip(Integer id){
         return repository.findByTripId(id);
     }
 
-    public Participant findByEmailAndTripId(String email, Integer id){
-        return repository.findByEmailAndTripId(email, id).orElseThrow(() -> new RuntimeException("Participante não encontrado com o email "+email+" e id de viagem "+id));
+    public Participant findByTripIdAndEmail(Integer tripId, String email){
+        return repository.findByEmailAndTripId(email, tripId).orElseThrow(() -> new RuntimeException("Participante não encontrado com o email "+email+" e id de viagem "+tripId));
     }
 
     public void updateConfirmation(String email){
@@ -45,7 +36,10 @@ public class ParticipantService {
 
         participant.setConfirmed(true);
         repository.save(participant);
+    }
 
+    public void save(Participant participant){
+        repository.save(participant);
     }
 
 }

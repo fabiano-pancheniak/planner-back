@@ -74,6 +74,18 @@ public class Participant {
         return trip;
     }
 
+    @Override
+    public String toString() {
+        return "Participant{" +
+                "id=" + id +
+                ", publicId='" + publicId + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", isConfirmed=" + isConfirmed +
+                ", trip=" + trip +
+                '}';
+    }
+
     public void setTrip(Trip trip) {
         this.trip = trip;
     }
