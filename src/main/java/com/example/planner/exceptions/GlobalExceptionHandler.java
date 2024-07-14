@@ -33,4 +33,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleInvalidStartAndEndDate(StartDateGreaterThanEndDateException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ExceptionResponse(ex.getMessage()));
     }
+
+    @ExceptionHandler(ActivityDateOutOfRangeException.class)
+    public ResponseEntity<ExceptionResponse> handleActivityDateOutOfRange(ActivityDateOutOfRangeException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ExceptionResponse(ex.getMessage()));
+    }
+
 }
