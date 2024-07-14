@@ -2,6 +2,7 @@ package com.example.planner.trip.application;
 
 import com.example.planner.exceptions.EmailIsAlreadyInTripException;
 import com.example.planner.exceptions.OwnerEmailIsInvitedException;
+import com.example.planner.exceptions.StartDateGreaterThanEndDateException;
 import com.example.planner.exceptions.TripNotFoundException;
 import com.example.planner.mail.EmailService;
 import com.example.planner.participant.application.ParticipantService;
@@ -14,6 +15,7 @@ import com.example.planner.trip.repository.TripRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,6 +43,8 @@ public class TripService {
 
     @Transactional
     public Trip createTrip(TripRequestDto body){
+        this.checkIfStarterDateIsGreaterThanEndDate(body.startsAt(), body.endsAt());
+
         Trip trip = new Trip();
         trip.setPublicId(UUID.randomUUID().toString());
         trip.setDestino(body.destination());
@@ -143,6 +147,12 @@ public class TripService {
             if(email.equals(ownerEmail)){
                 throw new OwnerEmailIsInvitedException(ownerEmail);
             }
+        }
+    }
+
+    private void checkIfStarterDateIsGreaterThanEndDate(LocalDateTime startDate, LocalDateTime endDate){
+        if (startDate.isAfter(endDate)) {
+            throw new StartDateGreaterThanEndDateException("Data inicial não pode ser maior que data final.");
         }
     }
 

@@ -29,4 +29,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ExceptionResponse(ex.getMessage()));
     }
 
+    @ExceptionHandler(StartDateGreaterThanEndDateException.class)
+    public ResponseEntity<ExceptionResponse> handleInvalidStartAndEndDate(StartDateGreaterThanEndDateException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ExceptionResponse(ex.getMessage()));
+    }
 }
