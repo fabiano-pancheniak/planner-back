@@ -50,7 +50,7 @@ public class TripService {
         repository.save(trip);
 
         this.sendOwnerEmail(body.ownerEmail(), trip.getPublicId());
-        //preencher tabela de participantes e viagem
+
         for (String email : body.emailsToInvite()){
             this.addParticipantToTrip(new ParticipantRequestDto(email, trip.getId()));
         }
