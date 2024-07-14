@@ -19,4 +19,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(ex.getMessage()));
     }
 
+    @ExceptionHandler(EmailIsAlreadyInTripException.class)
+    public ResponseEntity<ExceptionResponse> handleEmailIsAlreadyInTrip(EmailIsAlreadyInTripException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ExceptionResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler(OwnerEmailIsInvitedException.class)
+    public ResponseEntity<ExceptionResponse> handleOwnerEmailsIsInvited(OwnerEmailIsInvitedException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ExceptionResponse(ex.getMessage()));
+    }
+
 }

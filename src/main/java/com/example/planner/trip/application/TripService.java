@@ -1,5 +1,7 @@
 package com.example.planner.trip.application;
 
+import com.example.planner.exceptions.EmailIsAlreadyInTripException;
+import com.example.planner.exceptions.OwnerEmailIsInvitedException;
 import com.example.planner.exceptions.TripNotFoundException;
 import com.example.planner.mail.EmailService;
 import com.example.planner.participant.application.ParticipantService;
@@ -48,9 +50,12 @@ public class TripService {
         trip.setOwnerEmail(body.ownerEmail());
         trip.setOwnerName(body.ownerName());
 
+        this.checkIfOwnerEmailIsInvited(body.ownerEmail(), body.emailsToInvite());
+
         repository.save(trip);
 
         this.sendOwnerEmail(body.ownerEmail(), trip.getPublicId());
+
 
         for (String email : body.emailsToInvite()){
             this.addParticipantToTrip(new ParticipantRequestDto(email, trip.getId()));
@@ -114,12 +119,31 @@ public class TripService {
 
     private void addParticipantToTrip(ParticipantRequestDto payload){
         Trip trip = repository.findById(payload.tripId()).orElseThrow(() -> new TripNotFoundException(payload.tripId().toString()));
+        this.checkIfEmailIsAlreadyRegisteredToTrip(payload.email(), payload.tripId());
+
         Participant participant = new Participant();
         participant.setEmail(payload.email());
         participant.setTrip(trip);
         participant.setConfirmed(false);
 
         participantService.save(participant);
+    }
+
+    private void checkIfEmailIsAlreadyRegisteredToTrip(String email, Integer tripId){
+        List<Participant> participants = participantService.findByTrip(tripId);
+        for(Participant participant : participants){
+            if(participant.getEmail().equals(email)){
+                throw new EmailIsAlreadyInTripException(email, tripId.toString());
+            }
+        }
+    }
+
+    private void checkIfOwnerEmailIsInvited(String ownerEmail, List<String> emailsToInvite){
+        for(String email : emailsToInvite){
+            if(email.equals(ownerEmail)){
+                throw new OwnerEmailIsInvitedException(ownerEmail);
+            }
+        }
     }
 
 }
