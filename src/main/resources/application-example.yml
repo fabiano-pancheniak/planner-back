@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:/data/planner
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+  mail:
+    host: smtp.gmail.com
+    password: <SENHA DE APP>
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    username: <EMAIL>
+
