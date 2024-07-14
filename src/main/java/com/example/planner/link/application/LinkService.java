@@ -1,5 +1,6 @@
 package com.example.planner.link.application;
 
+import com.example.planner.exceptions.TripNotFoundException;
 import com.example.planner.link.application.dto.LinkRequest;
 import com.example.planner.link.domain.Link;
 import com.example.planner.link.repository.LinkRepository;
@@ -8,7 +9,6 @@ import com.example.planner.trip.domain.Trip;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class LinkService {
@@ -24,7 +24,7 @@ public class LinkService {
     public List<Link> getByTrip(Integer id){return repository.findByTripId(id);}
 
     public Link create(LinkRequest payload){
-        Trip trip = tripService.getById(payload.tripId()).orElseThrow(() -> new RuntimeException("Viagem com o id "+payload.tripId()+" não encontrada."));
+        Trip trip = tripService.getById(payload.tripId()).orElseThrow(() -> new TripNotFoundException(payload.tripId().toString()));
         Link link = new Link();
         link.setDescription(payload.description());
         link.setUrl(payload.link());

@@ -3,6 +3,7 @@ package com.example.planner.activity.application;
 import com.example.planner.activity.application.dto.CreateActivity;
 import com.example.planner.activity.domain.Activity;
 import com.example.planner.activity.repository.ActivityRepository;
+import com.example.planner.exceptions.TripNotFoundException;
 import com.example.planner.trip.application.TripService;
 import com.example.planner.trip.domain.Trip;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class ActivityService {
     }
 
     public Activity create(CreateActivity payload){
-        Trip trip = tripService.getByPublicId(payload.tripId()).orElseThrow(() -> new RuntimeException("Viagem não encontrada com o id: "+ payload.tripId()));
+        Trip trip = tripService.getByPublicId(payload.tripId()).orElseThrow(() -> new TripNotFoundException(payload.tripId()));
 
         Activity activity = new Activity();
         activity.setDescription(payload.description());

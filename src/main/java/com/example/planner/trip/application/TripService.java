@@ -1,5 +1,6 @@
 package com.example.planner.trip.application;
 
+import com.example.planner.exceptions.TripNotFoundException;
 import com.example.planner.mail.EmailService;
 import com.example.planner.participant.application.ParticipantService;
 import com.example.planner.participant.application.dto.GuestConfirm;
@@ -59,7 +60,7 @@ public class TripService {
 
     @Transactional
     public Trip ownerConfirmation(String publicId){
-        Trip trip = repository.findByPublicId(publicId).orElseThrow(() -> new RuntimeException("Viagem não encontrada com o id:" +publicId));
+        Trip trip = repository.findByPublicId(publicId).orElseThrow(() -> new TripNotFoundException(publicId));
         trip.setIsConfirmed(true);
         repository.save(trip);
 
@@ -93,7 +94,7 @@ public class TripService {
 
 
     public Participant guestsConfirmation(GuestConfirm payload, String publicId){
-        Trip trip = this.getByPublicId(publicId).orElseThrow(() -> new RuntimeException("Trip não encontrada com o id: "+publicId));
+        Trip trip = this.getByPublicId(publicId).orElseThrow(() -> new TripNotFoundException(publicId));
         Participant participant = participantService.findByTripIdAndEmail(trip.getId(), payload.email());
 
         participant.setName(payload.name());
@@ -104,7 +105,7 @@ public class TripService {
     }
 
     public void inviteParticipant(ParticipantRequestDto payload){
-        Trip trip = repository.findById(payload.tripId()).orElseThrow(() -> new RuntimeException("Viagem com o id "+payload.tripId()+" não encontrada."));
+        Trip trip = repository.findById(payload.tripId()).orElseThrow(() -> new TripNotFoundException(payload.tripId().toString()));
         this.addParticipantToTrip(payload);
         String URL = "http://localhost:4200/trip-invite?trip="+trip.getPublicId()+"&email="+payload.email();
 
@@ -112,7 +113,7 @@ public class TripService {
     }
 
     private void addParticipantToTrip(ParticipantRequestDto payload){
-        Trip trip = repository.findById(payload.tripId()).orElseThrow(() -> new RuntimeException("Viagem com o id "+payload.tripId()+" não encontrada."));
+        Trip trip = repository.findById(payload.tripId()).orElseThrow(() -> new TripNotFoundException(payload.tripId().toString()));
         Participant participant = new Participant();
         participant.setEmail(payload.email());
         participant.setTrip(trip);
