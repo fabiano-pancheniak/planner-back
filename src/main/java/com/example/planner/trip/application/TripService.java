@@ -44,6 +44,7 @@ public class TripService {
     @Transactional
     public Trip createTrip(TripRequestDto body){
         this.checkIfStarterDateIsGreaterThanEndDate(body.startsAt(), body.endsAt());
+        emailService.validateEmail(body.ownerEmail());
 
         Trip trip = new Trip();
         trip.setPublicId(UUID.randomUUID().toString());
@@ -70,6 +71,10 @@ public class TripService {
     @Transactional
     public Trip ownerConfirmation(String publicId){
         Trip trip = repository.findByPublicId(publicId).orElseThrow(() -> new TripNotFoundException(publicId));
+        if(trip.getIsConfirmed()){
+            return trip;
+        }
+
         trip.setIsConfirmed(true);
         repository.save(trip);
 
@@ -124,6 +129,7 @@ public class TripService {
     private void addParticipantToTrip(ParticipantRequestDto payload){
         Trip trip = repository.findById(payload.tripId()).orElseThrow(() -> new TripNotFoundException(payload.tripId().toString()));
         this.checkIfEmailIsAlreadyRegisteredToTrip(payload.email(), payload.tripId());
+        emailService.validateEmail(payload.email());
 
         Participant participant = new Participant();
         participant.setEmail(payload.email());

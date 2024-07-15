@@ -39,4 +39,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ExceptionResponse(ex.getMessage()));
     }
 
+    @ExceptionHandler(InvalidEmailException.class)
+    public ResponseEntity<ExceptionResponse> handleInvalidEmail(InvalidEmailException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ExceptionResponse(ex.getMessage()));
+    }
 }
